@@ -29,11 +29,11 @@ def get_photo_from_igromania(url):
 def get_last_news_from_stopgame():
     response = requests.get(URL_STOPGAME, headers=HEADERS)
     soup = bs(response.content, 'html.parser')
-    items = soup.find('div', class_='item article-summary')
+    items = soup.find('section', class_='swiper-wrapper')
 
-    title = items.find('div', class_='caption caption-bold').get_text() + '\n\nИсточник: https://stopgame.ru/'
-    url = URL_STOPGAME + items.find("a", class_="article-image").get("href")
-    img = items.find('img', class_='image-16x9 p-0').get('src')
+    title = items.find('a', class_='img').get('title') + '\n\nИсточник: https://stopgame.ru'
+    url = URL_STOPGAME + items.find('a', class_='img').get('href')
+    img = items.find('img').get('src')
 
     data = {'title': title, 'url': url, 'img': img}
 

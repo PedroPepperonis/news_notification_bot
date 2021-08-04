@@ -1,19 +1,18 @@
 import requests
 from bs4 import BeautifulSoup as bs
 
-from config.config import URL_STOPGAME, URL_IGROMANIA, URL_VGTIMES, HEADERS
+from config.config import URL_STOPGAME, URL_IGROMANIA, URL_VGTIMES, HEADERS, DATABASE_URL
+from utils.db import Database
+
+db = Database(DATABASE_URL)
 
 
-def check_last_article(url):
-    with open('last_url.txt', 'r') as f:
-        urls = f.read().splitlines()
-        if url in urls:
-            return False
-    with open('last_url.txt', 'w') as f:
-        for i in urls:
-            f.write(i + '\n')
-        f.write(url)
-        return True
+def check_last_article(title, url):
+    result = db.get_news(url)
+    if result:
+        return False
+    db.add_news(title, url)
+    return True
 
 
 def get_photo_from_igromania(url):
@@ -37,7 +36,7 @@ def get_last_news_from_stopgame():
 
     data = {'title': title, 'url': url, 'img': img}
 
-    if check_last_article(url):
+    if check_last_article(title, url):
         return data
 
 
@@ -53,7 +52,7 @@ def get_last_news_from_igromania():
 
     data = {'title': title, 'url': url, 'img': img}
 
-    if check_last_article(url):
+    if check_last_article(title, url):
         return data
 
 
@@ -72,5 +71,5 @@ def get_last_news_from_vgtimes():
 
     data = {'title': title, 'url': url, 'img': img}
 
-    if check_last_article(url):
+    if check_last_article(title, url):
         return data
